@@ -1,0 +1,8 @@
+<Project>
+    <PropertyGroup Condition="$(OS) != Unix">
+        <MoonscarsPath>C:/Program Files (x86)/Steam/steamapps/common/Moonscars/Moonscars_Data/Managed</MoonscarsPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="$(OS) == Unix">
+        <MoonscarsPath>$(HOME)/.steam/steam/steamapps/common/Moonscars/Moonscars_Data/Managed</MoonscarsPath>
+    </PropertyGroup>
+</Project>

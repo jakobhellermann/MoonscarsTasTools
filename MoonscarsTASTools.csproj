@@ -1,0 +1,53 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <Import Project="LocalBuildProperties.props" />
+
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+        <AssemblyName>TASTools</AssemblyName>
+
+        <LangVersion>11</LangVersion>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <Reference Include="Moonscars">
+            <HintPath>$(MoonscarsPath)/Assembly-CSharp.dll</HintPath>
+        </Reference>
+        <Reference Include="TasFormat">
+            <HintPath>..\utas\TasFormat\obj\Release\net7.0\TasFormat.dll</HintPath>
+        </Reference>
+
+        <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(MoonscarsPath)/UnityEngine.CoreModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(MoonscarsPath)/UnityEngine.UIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(MoonscarsPath)/UnityEngine.IMGUIModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(MoonscarsPath)/UnityEngine.TextRenderingModule.dll</HintPath>
+        </Reference>
+        <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
+            <HintPath>$(MoonscarsPath)/UnityEngine.Physics2DModule.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.InputSystem">
+            <HintPath>$(MoonscarsPath)/Unity.InputSystem.dll</HintPath>
+        </Reference>
+        <Reference Include="Unity.TextMeshPro">
+            <HintPath>$(MoonscarsPath)/Unity.TextMeshPro.dll</HintPath>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="MonoMod" Version="22.7.31.1" />
+        <PackageReference Include="MonoMod.RuntimeDetour" Version="22.7.31.1" />
+    </ItemGroup>
+
+    <Target Name="CopyMod" AfterTargets="PostBuildEvent">
+        <Message Importance="high" Text="copying $(TargetPath) to $(MoonscarsPath)/Mods/$(AssemblyPath)..." />
+        <Copy SourceFiles="$(TargetPath)" DestinationFolder="$(MoonscarsPath)/Mods/$(AssemblyName)" />
+        <Copy SourceFiles="$(TargetDir)$(TargetName).pdb" DestinationFolder="$(MoonscarsPath)/Mods/$(AssemblyName)" />
+    </Target>
+</Project>
