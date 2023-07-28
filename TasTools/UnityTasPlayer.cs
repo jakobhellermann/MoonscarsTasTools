@@ -15,7 +15,7 @@ public class UnityTasPlayer {
 
     public event Action? OnTasFinished;
     public event Action<TasLine.FrameInput, int, int>? OnAdvance;
-    public event Action<TasLine.Breakpoint>? OnBreakpointHit;
+    public event Action<bool>? OnBreakpointHit;
 
     public string? TasPath;
     public int ActiveFrame;
@@ -44,7 +44,6 @@ public class UnityTasPlayer {
         });
         _virtualKeyboard = InputSystem.AddDevice<Keyboard>("VirtualKeyboard");
 
-        Logger.Log("registered onBeforeInput");
         InputSystem.onBeforeUpdate += OnBeforeUpdate;
     }
 
@@ -55,8 +54,15 @@ public class UnityTasPlayer {
     public void Start() {
         _shouldRun = true;
 
+        var nextBreakpoint = GetNextBreakpoint();
+        var speedupFactor = nextBreakpoint == null ? 1 : nextBreakpoint?.Factor;
+        var targetFrameRate = speedupFactor switch {
+            { } factor => (int)(TasFramerate * factor),
+            null => -1
+        };
         _previousApplicationTargetFramerate = Application.targetFrameRate;
-        Application.targetFrameRate = TasFramerate;
+        Application.targetFrameRate = targetFrameRate;
+
         Time.captureFramerate = TasFramerate;
     }
 
@@ -78,6 +84,18 @@ public class UnityTasPlayer {
     private void ClearInput() {
         InputSystem.QueueStateEvent(_virtualKeyboard, new KeyboardState());
     }
+
+
+    private TasLine.Breakpoint? GetNextBreakpoint() {
+        if (TasPath is not { } path) return null;
+        var file = TasFile.Parse(File.ReadAllText(path)); // TODO be more smart about this
+        if (file.GetCursorStateAt(ActiveFrame) is not { } state) return null;
+
+        return file.Lines.Skip(state.TasFileLineIndex)
+            .Select(line => line.Line)
+            .OfType<TasLine.Breakpoint>().FirstOrDefault();
+    }
+
 
     private void OnBeforeUpdate() {
         if (!_shouldRun) return;
@@ -101,7 +119,8 @@ public class UnityTasPlayer {
         foreach (var other in state.Other)
             switch (other) {
                 case TasLine.Breakpoint breakpoint:
-                    OnBreakpointHit?.Invoke(breakpoint);
+                    var nextBreakpoint = GetNextBreakpoint();
+                    OnBreakpointHit?.Invoke(nextBreakpoint == null);
                     break;
                 case TasLine.Call:
                     SceneController.Instance.Player.transform.position = new Vector3(-247.98f, 6.25f, -1f);

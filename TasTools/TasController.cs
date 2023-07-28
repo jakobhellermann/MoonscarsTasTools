@@ -61,12 +61,13 @@ public class TasController : MonoBehaviour {
         Task.Run(async () => await TasCommunicationClient.Send(ClientOpCode.SetStudioInfo, studioInfo.ToByteArray()));
     }
 
-    private void OnBreakpointHit(TasLine.Breakpoint breakpoint) {
+    private void OnBreakpointHit(bool lastBreakpoint) {
+        if (lastBreakpoint) Pause();
     }
 
 
     public void RestartTas() {
-        if (!_tasRunning) {
+        if (!_tasRunning && !_gamePaused) {
             if (_tasPath is null) {
                 Logger.LogError("Cant start TAS without knowing the path");
                 return;
@@ -91,11 +92,8 @@ public class TasController : MonoBehaviour {
     }
 
     private void StopTas() {
-        Logger.Log("Stop");
         _tasRunning = false;
         _player.ActiveFrame = 0;
-
-        Time.captureFramerate = 0;
 
         _player.Stop();
     }
@@ -118,7 +116,7 @@ public class TasController : MonoBehaviour {
     private void Pause() {
         if (_gamePaused) return;
 
-        _player.Stop();
+        if (_tasRunning) _player.Stop();
 
         Logger.Log("Pause");
         _gamePaused = true;
@@ -130,7 +128,7 @@ public class TasController : MonoBehaviour {
     private void Resume() {
         if (!_gamePaused) return;
 
-        _player.Start();
+        if (_tasRunning) _player.Start();
 
         Logger.Log("Resume");
         SlowMoController.Instance.enabled = true;
