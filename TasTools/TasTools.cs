@@ -2,6 +2,7 @@
 using System.Reflection;
 using JetBrains.Annotations;
 using ModdingAPI;
+using MonoMod.RuntimeDetour;
 using MoonscarsTASTools.TasTools;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -23,9 +24,32 @@ internal class TasTools : Mod {
 
     private InputActionMap _keybindings = null!;
 
+
+    private static float GetUnscaledTime() {
+        var _ = 0;
+        return Time.time;
+    }
+
+    private static float GetUnscaledDeltaTime() {
+        var _ = 0;
+        return Time.deltaTime * Time.timeScale;
+    }
+
     public override void Load() {
         Application.runInBackground = true;
         InputSystem.settings.backgroundBehavior = InputSettings.BackgroundBehavior.IgnoreFocus;
+
+        var methodInfoUnscaledTime =
+            typeof(Time).GetMethod("get_unscaledTime", BindingFlags.Static | BindingFlags.Public)!;
+        var targetUnscaledTime =
+            typeof(TasTools).GetMethod("GetUnscaledTime", BindingFlags.Static | BindingFlags.NonPublic)!;
+        var unscaledTimeDetour = new NativeDetour(methodInfoUnscaledTime, targetUnscaledTime);
+
+        var methodInfoUnscaledDeltaTime =
+            typeof(Time).GetMethod("get_unscaledDeltaTime", BindingFlags.Static | BindingFlags.Public)!;
+        var targetUnscaledDeltaTime =
+            typeof(TasTools).GetMethod("GetUnscaledDeltaTime", BindingFlags.Static | BindingFlags.NonPublic)!;
+        var unscaledDeltaTimeDetour = new NativeDetour(methodInfoUnscaledDeltaTime, targetUnscaledDeltaTime);
 
         _debugmodGameObject = new GameObject();
         Object.DontDestroyOnLoad(_debugmodGameObject);
