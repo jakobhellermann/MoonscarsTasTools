@@ -25,15 +25,9 @@ internal class TasTools : Mod {
     private InputActionMap _keybindings = null!;
 
 
-    private static float GetUnscaledTime() {
-        var _ = 0;
-        return Time.time;
-    }
+    private static float GetUnscaledTime() => Time.time;
 
-    private static float GetUnscaledDeltaTime() {
-        var _ = 0;
-        return Time.deltaTime * Time.timeScale;
-    }
+    private static float GetUnscaledDeltaTime() => Time.deltaTime * Time.timeScale;
 
     public override void Load() {
         Application.runInBackground = true;

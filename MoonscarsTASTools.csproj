@@ -12,37 +12,53 @@
     <ItemGroup>
         <Reference Include="Moonscars">
             <HintPath>$(MoonscarsPath)/Assembly-CSharp.dll</HintPath>
+            <Private>false</Private>
         </Reference>
-        <Reference Include="TasFormat">
-            <HintPath>..\utas\TasFormat\obj\Release\net7.0\TasFormat.dll</HintPath>
+
+        <!--
+        <Reference Include="uTas.TasFormat">
+            <HintPath>..\utas\TasFormat\obj\Release\net472\uTasFormat.dll</HintPath>
         </Reference>
+        <Reference Include="uTas.Communication">
+            <HintPath>..\utas\Communication\obj\Release\net472\uTasCommunication.dll</HintPath>
+        </Reference>
+        -->
 
         <Reference Include="UnityEngine.CoreModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(MoonscarsPath)/UnityEngine.CoreModule.dll</HintPath>
+            <Private>false</Private>
         </Reference>
         <Reference Include="UnityEngine.UIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(MoonscarsPath)/UnityEngine.UIModule.dll</HintPath>
+            <Private>false</Private>
         </Reference>
         <Reference Include="UnityEngine.IMGUIModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(MoonscarsPath)/UnityEngine.IMGUIModule.dll</HintPath>
+            <Private>false</Private>
         </Reference>
         <Reference Include="UnityEngine.TextRenderingModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(MoonscarsPath)/UnityEngine.TextRenderingModule.dll</HintPath>
+            <Private>false</Private>
         </Reference>
         <Reference Include="UnityEngine.Physics2DModule, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
             <HintPath>$(MoonscarsPath)/UnityEngine.Physics2DModule.dll</HintPath>
+            <Private>false</Private>
         </Reference>
         <Reference Include="Unity.InputSystem">
             <HintPath>$(MoonscarsPath)/Unity.InputSystem.dll</HintPath>
+            <Private>false</Private>
         </Reference>
         <Reference Include="Unity.TextMeshPro">
             <HintPath>$(MoonscarsPath)/Unity.TextMeshPro.dll</HintPath>
+            <Private>false</Private>
         </Reference>
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="MonoMod" Version="22.7.31.1" />
-        <PackageReference Include="MonoMod.RuntimeDetour" Version="22.7.31.1" />
+        <PackageReference Include="MonoMod" Version="22.7.31.1" ExcludeAssets="runtime" />
+        <PackageReference Include="MonoMod.RuntimeDetour" Version="22.7.31.1" ExcludeAssets="runtime" />
+        <PackageReference Include="uTas.Communication" Version="0.2.0" />
+        <PackageReference Include="uTas.TasFormat" Version="0.2.0" />
     </ItemGroup>
 
     <Target Name="CopyMod" AfterTargets="PostBuildEvent">

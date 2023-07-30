@@ -1,11 +1,11 @@
 using System;
 using System.IO;
 using System.Linq;
-using TasFormat;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Layouts;
 using UnityEngine.InputSystem.LowLevel;
+using uTas.TasFormat;
 using Logger = ModdingAPI.Logger;
 
 namespace MoonscarsTASTools.TasTools;

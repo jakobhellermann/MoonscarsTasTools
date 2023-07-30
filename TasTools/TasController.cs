@@ -1,9 +1,9 @@
 using System;
 using System.Threading.Tasks;
 using MoonscarsTASTools.TasTools;
-using MoonscarsTASTools.uTas.Communication;
-using TasFormat;
 using UnityEngine;
+using uTas.Communication;
+using uTas.TasFormat;
 using Logger = ModdingAPI.Logger;
 
 namespace MoonscarsTASTools.TASTools;
@@ -35,10 +35,11 @@ public class TasController : MonoBehaviour {
 
         Application.wantsToQuit += () => {
             Task.Run(async () => {
-                if (TasCommunicationClient.Connected) await TasCommunicationClient.Send(ClientOpCode.CloseConnection);
-                TasCommunicationClient.Cancel();
+                if (TasCommunicationClient.Connected)
+                    await TasCommunicationClient.SendCloseConnection();
                 TasCommunicationClient.Dispose();
                 _canShutdown = true;
+
                 Application.Quit();
             });
             return _canShutdown;
@@ -58,7 +59,7 @@ public class TasController : MonoBehaviour {
         _player.ActiveFrame++;
 
         var studioInfo = new StudioInfo(lineNumber, $"{frameInsideLine + 1}", _player.ActiveFrame, 0, 0, 0, "", "");
-        Task.Run(async () => await TasCommunicationClient.Send(ClientOpCode.SetStudioInfo, studioInfo.ToByteArray()));
+        Task.Run(async () => await TasCommunicationClient.SendStudioInfo(studioInfo));
     }
 
     private void OnBreakpointHit(bool lastBreakpoint) {
@@ -100,9 +101,7 @@ public class TasController : MonoBehaviour {
 
 
     private void SendStudioStop() {
-        Task.Run(async () => {
-            await TasCommunicationClient.Send(ClientOpCode.SetStudioInfo, StudioInfo.Invalid.ToByteArray());
-        });
+        Task.Run(async () => await TasCommunicationClient.SendStudioInfo(null));
     }
 
 
@@ -163,8 +162,8 @@ public class TasController : MonoBehaviour {
         if (TasCommunicationClient.Connected)
             Task.Run(async () => {
                 if (SceneController.Instance is null) return;
-                var infoString = SceneController.Instance.Player.transform.position.ToString();
-                await TasCommunicationClient.Send(ClientOpCode.SetInfoString, infoString);
+                var infoText = SceneController.Instance.Player.transform.position.ToString();
+                await TasCommunicationClient.SendInfoText(infoText);
             });
     }
 
